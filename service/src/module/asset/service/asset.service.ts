@@ -92,7 +92,6 @@ export class AssetService {
         }
         return {
             assetId,
-            message: "Asset has been added to the processing queue"
         }
     }
 }

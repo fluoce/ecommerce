@@ -15,5 +15,5 @@ POST http://localhost:3001/asset/upload-complete
 Content-Type: application/json
 
 {
-    "assetId":"01KTBQFGJMZCVT8PCVP4J8B85H"
+    "assetId":"01KTBKBK6TTBKP4NK72BME18TQ"
 }

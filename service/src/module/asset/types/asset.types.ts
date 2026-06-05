@@ -1,2 +1,2 @@
 
-export type AssetKeyType = "original" | "tiny" | "thumbnail" | "medium" | "large"
+export type AssetKeyType = "original" | "tiny" | "thumbnail" | "medium" | "large" | "extraLarge"

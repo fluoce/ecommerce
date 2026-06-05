@@ -22,20 +22,21 @@ enum AssetStorageProvider {
 }
 
 model Asset {
-    id           String               @id
-    type         AssetType
-    usage        AssetUsage
-    provider     AssetStorageProvider @default(S3)
-    originalKey  String
-    tinyKey      String?
-    thumbnailKey String?
-    mediumKey    String?
-    largeKey     String?
-    fileName     String
-    mimeType     String
-    status       AssetStatus          @default(TEMPORARY)
-    createdAt    DateTime             @default(now())
-    updatedAt    DateTime             @updatedAt
+    id            String               @id
+    type          AssetType
+    usage         AssetUsage
+    provider      AssetStorageProvider @default(S3)
+    originalKey   String
+    tinyKey       String?
+    thumbnailKey  String?
+    mediumKey     String?
+    largeKey      String?
+    extraLargeKey String?
+    fileName      String
+    mimeType      String
+    status        AssetStatus          @default(TEMPORARY)
+    createdAt     DateTime             @default(now())
+    updatedAt     DateTime             @updatedAt
 
     categoryThumbnails Category[] @relation("CategoryThumbnail")
     categoryBanners    Category[] @relation("CategoryBanner")

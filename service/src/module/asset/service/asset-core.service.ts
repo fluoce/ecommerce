@@ -50,13 +50,15 @@ export class AssetCoreService {
         tinyKey,
         thumbnailKey,
         mediumKey,
-        largeKey
+        largeKey,
+        extraLargeKey
     }: {
         id: string,
         tinyKey: string | undefined
         thumbnailKey: string | undefined,
         mediumKey: string | undefined,
         largeKey: string | undefined
+        extraLargeKey: string | undefined
     }): Promise<Asset | null> {
         return await funcTryCatch<Asset | null, null>({
             func: () => this.prisma.asset.update({
@@ -68,6 +70,7 @@ export class AssetCoreService {
                     thumbnailKey,
                     mediumKey,
                     largeKey,
+                    extraLargeKey
                 }
             }),
             action: "add_asset_objectKey",

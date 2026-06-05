@@ -32,3 +32,4 @@ export const funcSharpTiny = funcSharp("tiny");
 export const funcSharpThumbnail = funcSharp("thumbnail");
 export const funcSharpMedium = funcSharp("medium");
 export const funcSharpLarge = funcSharp("large");
+export const funcSharpExtraLarge = funcSharp("extraLarge") 

@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException, ServiceUnav
 import { AssetCoreService } from "../service/asset-core.service";
 import { STORAGE_TYPES } from "src/infrastructure/storage/storage.constants";
 import type { StorageService } from "src/infrastructure/storage/storage.interface";
-import { funcSharpLarge, funcSharpMedium, funcSharpThumbnail, funcSharpTiny } from "src/module/asset/function/func-sharp";
+import { funcSharpExtraLarge, funcSharpLarge, funcSharpMedium, funcSharpThumbnail, funcSharpTiny } from "src/module/asset/function/func-sharp";
 import { funcWebpImageObjectKey } from "../function/func-object-key";
 import { AssetType } from "@prisma/client";
 
@@ -32,13 +32,14 @@ export class AssetProcessorService {
         if (!buffer || buffer.length === 0) {
             throw new ServiceUnavailableException(`buffer for asset ${assetId} not found or is empty`);
         }
-        const [tiny, thumbnail, medium, large] = await Promise.all([
+        const [tiny, thumbnail, medium, large, extraLarge] = await Promise.all([
             funcSharpTiny({ buffer }),
             funcSharpThumbnail({ buffer }),
             funcSharpMedium({ buffer }),
-            funcSharpLarge({ buffer })
+            funcSharpLarge({ buffer }),
+            funcSharpExtraLarge({ buffer })
         ])
-        const [tinyKey, thumbnailKey, mediumKey, largeKey] = await Promise.all([
+        const [tinyKey, thumbnailKey, mediumKey, largeKey, extraLargeKey] = await Promise.all([
             tiny
                 ? this.storageService.putObject({
                     key: funcWebpImageObjectKey({
@@ -83,6 +84,17 @@ export class AssetProcessorService {
                     contentType: 'image/webp',
                 })
                 : Promise.resolve(),
+            extraLarge
+                ? this.storageService.putObject({
+                    key: funcWebpImageObjectKey({
+                        id: asset.id,
+                        assetType: AssetType.IMAGE,
+                        keyType: "extraLarge"
+                    }),
+                    buffer: extraLarge,
+                    contentType: 'image/webp',
+                })
+                : Promise.resolve(),
         ]);
         if (!thumbnailKey || !mediumKey || !largeKey) {
             throw new Error('One or more variant uploads failed');
@@ -93,6 +105,7 @@ export class AssetProcessorService {
             thumbnailKey: thumbnailKey ?? undefined,
             mediumKey: mediumKey ?? undefined,
             largeKey: largeKey ?? undefined,
+            extraLargeKey: extraLargeKey ?? undefined
         });
         if (!updatedAsset) {
             throw new ServiceUnavailableException(`Failed to update asset ${asset.id} object keys.`);

@@ -18,6 +18,11 @@ type SharpConfig = {
         width: number,
         quality: number,
         effort: number,
+    },
+    extraLarge: {
+        width: number,
+        quality: number,
+        effort: number,
     }
 };
 
@@ -40,6 +45,11 @@ export const SHARP_CONFIG: Readonly<SharpConfig> = Object.freeze({
     large: Object.freeze({
         width: 1080,
         quality: 80,
+        effort: 6
+    }),
+    extraLarge: Object.freeze({
+        width: 1920,
+        quality: 85,
         effort: 6
     })
 });
