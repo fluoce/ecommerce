@@ -72,12 +72,6 @@ export class AssetService {
         if (!asset) {
             throw new NotFoundException("asset not found")
         }
-        const objectExists = await this.storageService.exists({
-            key: asset.originalKey
-        })
-        if (!objectExists) {
-            throw new NotFoundException("asset not exists")
-        }
         if (asset.status === AssetStatus.PROCESSING) {
             throw new BadRequestException('Asset is already processing');
         }
@@ -87,6 +81,12 @@ export class AssetService {
         if (asset.status === AssetStatus.DELETED) {
             throw new BadRequestException('Asset is deleted');
         }
+        const objectExists = await this.storageService.exists({
+            key: asset.originalKey
+        })
+        if (!objectExists) {
+            throw new NotFoundException("asset not exists")
+        }
         if (asset.type === AssetType.IMAGE) {
             await this.queueService.addAssetProcessingJob({ assetId });
         } else if (asset.type === AssetType.VIDEO) {
@@ -95,9 +95,22 @@ export class AssetService {
                 status: AssetStatus.READY
             })
         }
-
         return {
             assetId,
+        }
+    }
+
+    async deleteAsset({ assetId }: { assetId: string }): Promise<ResponseDataType> {
+        const asset = await this.assetCoreService.updateAsssetStatus({
+            id: assetId,
+            status: AssetStatus.DELETED
+        })
+        if (!asset) {
+            throw new NotFoundException("asset not found or failed to delete");
+        }
+        return {
+            message: 'asset marked as deleted',
+            assetId
         }
     }
 }

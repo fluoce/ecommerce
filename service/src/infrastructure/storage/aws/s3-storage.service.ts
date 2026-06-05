@@ -1,6 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { StorageService } from '../storage.interface';
-import { S3Client, PutObjectCommand, HeadObjectCommand, GetObjectCommand, type GetObjectCommandOutput, PutObjectCommandOutput } from "@aws-sdk/client-s3"
+import {
+  S3Client,
+  PutObjectCommand,
+  HeadObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+  type GetObjectCommandOutput,
+  type PutObjectCommandOutput,
+  type DeleteObjectCommandOutput,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3StorageConfig } from 'src/config/storage.config';
 import type { ConfigType } from '@nestjs/config';
@@ -34,7 +43,6 @@ export class S3StorageService implements StorageService {
       Key: key,
       ContentType: mimeType
     });
-
     return await getSignedUrl(this.client, command, {
       expiresIn: 120
     });
@@ -47,13 +55,11 @@ export class S3StorageService implements StorageService {
       Body: buffer,
       ContentType: contentType,
     });
-
     const result = await funcTryCatch<PutObjectCommandOutput, null>({
       func: () => this.client.send(command),
-      action: "s3_putObject",
+      action: `s3_putObject_key_${key}`,
       logger: this.logger
     })
-
     if (!result || !result?.ETag) {
       return null
     }
@@ -65,30 +71,39 @@ export class S3StorageService implements StorageService {
       Bucket: this.config.bucketName,
       Key: key
     });
-
     const result = await funcTryCatch<GetObjectCommandOutput, null>({
       func: () => this.client.send(command),
-      action: "s3_getObject",
+      action: `s3_getObject_key_${key}`,
       logger: this.logger
     })
-
     if (!result || !result?.Body) {
       return null
     }
-
     return await funcTryCatch<Buffer | null, null>({
       func: async () => {
         const byteArray = await result.Body?.transformToByteArray();
         if (!byteArray) return null;
         return Buffer.from(byteArray);
       },
-      action: "s3_getObject_body_to_buffer",
+      action: `s3_getObject_body_to_buffer__key_${key}`,
       logger: this.logger
     })
   }
 
   async deleteObject({ key }: { key: string }): Promise<string | null> {
-    throw new Error('No S3 implemented');
+    const command = new DeleteObjectCommand({
+      Bucket: this.config.bucketName,
+      Key: key
+    })
+    const result = await funcTryCatch<DeleteObjectCommandOutput, null>({
+      func: async () => this.client.send(command),
+      action: `s3_deleteObject_key_${key}`,
+      logger: this.logger
+    });
+    if (!result) {
+      return null;
+    }
+    return key;
   }
 
   async exists({ key }: { key: string; }): Promise<boolean> {
@@ -101,7 +116,7 @@ export class S3StorageService implements StorageService {
       func: () => this.client.send(
         command
       ),
-      action: "s3_headObject",
+      action: `s3_headObject_key_${key}`,
       logger: this.logger,
     });
 

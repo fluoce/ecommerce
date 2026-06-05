@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { assetRoutes } from '../constant/route';
 import { AssetService } from '../service/asset.service';
 import { AssetUploadCompleteDto, CreateSignUrlDto } from '../types/create-asset.types';
@@ -20,6 +20,13 @@ export class AssetController {
         @Body() data: AssetUploadCompleteDto
     ) {
         return await this.assetService.assetUploadComplete({ data })
+    }
+
+    @Delete(assetRoutes.assetId)
+    async deleteAsset(
+        @Param('assetId') assetId: string
+    ) {
+        return await this.assetService.deleteAsset({ assetId });
     }
 
 }
