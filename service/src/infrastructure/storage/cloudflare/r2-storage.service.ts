@@ -1,12 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { StorageService } from '../storage.interface';
+import { Inject, Injectable } from '@nestjs/common';
+import { AssetStorageProvider } from '@prisma/client';
 
 @Injectable()
-export class R2StorageService implements StorageService {
-  upload(): Promise<string> {
-    throw new Error('No R2 implemented');
-  }
-  delete(): Promise<void> {
-    throw new Error('No R2 implemented');
-  }
+export class R2StorageService {
+    readonly provider: AssetStorageProvider = AssetStorageProvider.R2
 }

@@ -25,4 +25,4 @@ import { IkStorageService } from './imagekit/ik-storage.service';
   ],
   exports: [STORAGE_TYPES.S3, STORAGE_TYPES.R2, STORAGE_TYPES.IK],
 })
-export class StorageModule {}
+export class StorageModule { }

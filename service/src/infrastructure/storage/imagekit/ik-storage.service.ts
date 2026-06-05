@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { StorageService } from '../storage.interface';
+import { AssetStorageProvider } from '@prisma/client';
 
 @Injectable()
-export class IkStorageService implements StorageService {
-  upload(): Promise<string> {
-    throw new Error('No Ik implemented');
-  }
-  delete(): Promise<void> {
-    throw new Error('No Ik implemented');
-  }
+export class IkStorageService {
+    readonly provider: AssetStorageProvider = AssetStorageProvider.Ik
 }

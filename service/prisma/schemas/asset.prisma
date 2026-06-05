@@ -1,0 +1,45 @@
+enum AssetStatus {
+    TEMPORARY
+    PROCESSING
+    READY
+    FAILED
+    DELETED
+}
+
+enum AssetType {
+    IMAGE
+    VIDEO
+}
+
+enum AssetUsage {
+    CATEGORY
+}
+
+enum AssetStorageProvider {
+    S3
+    R2
+    Ik
+}
+
+model Asset {
+    id           String               @id
+    type         AssetType
+    usage        AssetUsage
+    provider     AssetStorageProvider @default(S3)
+    originalKey  String
+    tinyKey      String?
+    thumbnailKey String?
+    mediumKey    String?
+    largeKey     String?
+    fileName     String
+    mimeType     String
+    status       AssetStatus          @default(TEMPORARY)
+    createdAt    DateTime             @default(now())
+    updatedAt    DateTime             @updatedAt
+
+    categoryThumbnails Category[] @relation("CategoryThumbnail")
+    categoryBanners    Category[] @relation("CategoryBanner")
+
+    @@index([type])
+    @@index([status])
+}

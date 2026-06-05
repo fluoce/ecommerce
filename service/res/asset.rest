@@ -1,0 +1,19 @@
+### upload-url
+POST http://localhost:3001/asset/upload-url
+Content-Type: application/json
+
+{
+    "fileName": "image.png",
+    "mimeType": "image/png",
+    "size": 120202,
+    "usage":"CATEGORY"
+}
+
+
+### upload-complete
+POST http://localhost:3001/asset/upload-complete
+Content-Type: application/json
+
+{
+    "assetId":"01KTBQFGJMZCVT8PCVP4J8B85H"
+}

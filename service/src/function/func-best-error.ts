@@ -1,6 +1,6 @@
-export function funcBestError(error: unknown): string | undefined {
+export function funcBestError(error: unknown): string {
   if (error instanceof Error) {
-    return error.stack || error.message;
+    return error.message;
   }
   if (typeof error === 'string') {
     return error;
@@ -8,6 +8,6 @@ export function funcBestError(error: unknown): string | undefined {
   try {
     return JSON.stringify(error);
   } catch {
-    return undefined;
+    return 'Unknown error';
   }
 }

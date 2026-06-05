@@ -4,9 +4,10 @@ import { NotificationModule } from './notification/notification.module';
 import { QueueModule } from './queue/queue.module';
 import { StorageModule } from './storage/storage.module';
 
+
 @Module({
-  imports: [DatabaseModule, StorageModule, NotificationModule, QueueModule],
-  providers: [],
+  imports: [DatabaseModule, StorageModule, NotificationModule, QueueModule,],
+  providers: [StorageModule],
   exports: [DatabaseModule, StorageModule, NotificationModule, QueueModule],
 })
-export class InfrastructureModule {}
+export class InfrastructureModule { }
