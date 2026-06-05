@@ -89,7 +89,13 @@ export class AssetService {
         }
         if (asset.type === AssetType.IMAGE) {
             await this.queueService.addAssetProcessingJob({ assetId });
+        } else if (asset.type === AssetType.VIDEO) {
+            await this.assetCoreService.updateAsssetStatus({
+                id: asset.id,
+                status: AssetStatus.READY
+            })
         }
+
         return {
             assetId,
         }

@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 export const ASSET_SIZE_LIMITS = {
     IMAGE_MAX_SIZE: 5 * 1024 * 1024,
-    VIDEO_MAX_SIZE: 100 * 1024 * 1024,
+    VIDEO_MAX_SIZE: 200 * 1024 * 1024,
 };
 
 export const s3StorageConfig = registerAs(
