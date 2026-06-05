@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException, ServiceUnav
 import { AssetCoreService } from "../service/asset-core.service";
 import { STORAGE_TYPES } from "src/infrastructure/storage/storage.constants";
 import type { StorageService } from "src/infrastructure/storage/storage.interface";
-import { funcSharpLarge, funcSharpMedium, funcSharpThumbnail, funcSharpTiny } from "src/function/func-sharp";
+import { funcSharpLarge, funcSharpMedium, funcSharpThumbnail, funcSharpTiny } from "src/module/asset/function/func-sharp";
 import { funcWebpImageObjectKey } from "../function/func-object-key";
 import { AssetType } from "@prisma/client";
 
