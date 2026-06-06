@@ -29,4 +29,10 @@ export class AssetController {
         return await this.assetService.deleteAsset({ assetId });
     }
 
+    @Get(assetRoutes.publicUrl)
+    async getPublicUrls(
+        @Param('assetId') assetId: string
+    ) {
+        return await this.assetService.assetPublicUrls({ assetId });
+    }
 }

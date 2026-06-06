@@ -18,7 +18,6 @@ enum AssetUsage {
 enum AssetStorageProvider {
     S3
     R2
-    Ik
 }
 
 model Asset {

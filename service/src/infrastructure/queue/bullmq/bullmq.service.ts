@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { QueueService } from '../queue.interface';
 import { Job, Queue } from 'bullmq';
-import { QUEUES, QUEUES_NAMES } from '../queue.constants';
 import { InjectQueue } from '@nestjs/bullmq';
 import { funcTryCatch } from 'src/function/func-try-catch';
+import { QUEUES, QUEUES_NAMES } from 'src/config/queue.config';
 
 @Injectable()
 export class BullmqService implements QueueService {

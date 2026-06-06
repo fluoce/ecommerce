@@ -30,7 +30,7 @@ export class R2StorageService implements StorageService {
     ) {
         this.client = new S3Client({
             region: 'auto',
-            endpoint: config.url,
+            endpoint: config.endPoint,
             credentials: {
                 accessKeyId: config.accessKeyId,
                 secretAccessKey: config.secretAccessKey,

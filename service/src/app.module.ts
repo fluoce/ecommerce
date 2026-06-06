@@ -11,7 +11,7 @@ import { ModuleModule } from './module/module.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.local',
+      envFilePath: ['.env', '.env.local'],
       load: [s3StorageConfig, r2StorageConfig]
     }),
     InfrastructureModule,

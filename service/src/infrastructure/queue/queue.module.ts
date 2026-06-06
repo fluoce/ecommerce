@@ -3,7 +3,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { BullmqService } from './bullmq/bullmq.service';
 import { RabbitmqService } from './rabbitmq/rabbitmq.service';
 import { databaseConfig } from 'src/config/database.config';
-import { QUEUE_TYPES, QUEUES } from './queue.constants';
+import { QUEUE_TYPES, QUEUES } from 'src/config/queue.config';
 
 @Module({
   imports: [

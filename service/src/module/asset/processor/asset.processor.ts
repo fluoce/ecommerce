@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { Processor, WorkerHost, OnWorkerEvent } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { QUEUES, QUEUES_NAMES } from 'src/infrastructure/queue/queue.constants';
 import { AssetProcessorService } from './asset-processor.service';
 import { AssetCoreService } from '../service/asset-core.service';
 import { AssetStatus } from '@prisma/client';
+import { QUEUES, QUEUES_NAMES } from 'src/config/queue.config';
 
 @Processor(QUEUES.ASSET_PROCESSING)
 export class AssetProcessor extends WorkerHost {

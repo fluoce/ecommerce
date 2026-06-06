@@ -1,5 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
-import { STORAGE_TYPES } from 'src/infrastructure/storage/storage.constants';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import type { StorageService } from 'src/infrastructure/storage/storage.interface';
 import { AssetUploadCompleteDto, CreateSignUrlDto } from '../types/create-asset.types';
 import { IdService } from 'src/lib/id/id.service';
@@ -9,18 +8,19 @@ import { funcAssetType } from '../function/func-asset-type';
 import { ResponseDataType } from 'src/types/response.type';
 import { AssetCoreService } from './asset-core.service';
 import type { QueueService } from 'src/infrastructure/queue/queue.interface';
-import { AssetStatus, AssetType } from '@prisma/client';
-import { QUEUE_TYPES } from 'src/infrastructure/queue/queue.constants';
+import { Asset, AssetStatus, AssetType } from '@prisma/client';
+import { currentStorageProvider, storageAssetPublicUrls } from 'src/config/storage.config';
+import { currentQueueProvider } from 'src/config/queue.config';
 
 @Injectable()
 export class AssetService {
 
     constructor(
-        @Inject(STORAGE_TYPES.S3)
+        @Inject(currentStorageProvider)
         private readonly storageService: StorageService,
         private readonly id: IdService,
         private readonly assetCoreService: AssetCoreService,
-        @Inject(QUEUE_TYPES.BULLMQ)
+        @Inject(currentQueueProvider)
         private readonly queueService: QueueService
     ) { }
 
@@ -112,5 +112,41 @@ export class AssetService {
             message: 'asset marked as deleted',
             assetId
         }
+    }
+
+    async assetPublicUrls({ asset, assetId }: { asset?: Asset | undefined, assetId?: string }): Promise<{
+        originalUrl: string;
+        tinyUrl?: string;
+        thumbnailUrl?: string;
+        mediumUrl?: string;
+        largeUrl?: string;
+        extraLargeUrl?: string;
+    }> {
+        if (!asset && !assetId) {
+            throw new BadRequestException("Either asset or assetId is required");
+        }
+        const finalAsset =
+            asset ??
+            (await this.assetCoreService.getAssetById({
+                id: assetId!,
+            }));
+
+        if (!finalAsset) {
+            throw new NotFoundException('Asset not found');
+        }
+        const baseUrl = storageAssetPublicUrls()[finalAsset.provider];
+        if (!baseUrl) {
+            throw new InternalServerErrorException(
+                `No public URL configured for provider ${finalAsset.provider}`,
+            );
+        }
+        return {
+            originalUrl: `${baseUrl}/${finalAsset.originalKey}`,
+            tinyUrl: finalAsset.tinyKey ? `${baseUrl}/${finalAsset.tinyKey}` : undefined,
+            thumbnailUrl: finalAsset.thumbnailKey ? `${baseUrl}/${finalAsset.thumbnailKey}` : undefined,
+            mediumUrl: finalAsset.mediumKey ? `${baseUrl}/${finalAsset.mediumKey}` : undefined,
+            largeUrl: finalAsset.largeKey ? `${baseUrl}/${finalAsset.largeKey}` : undefined,
+            extraLargeUrl: finalAsset.extraLargeKey ? `${baseUrl}/${finalAsset.extraLargeKey}` : undefined
+        };
     }
 }

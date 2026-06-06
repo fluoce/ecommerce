@@ -3,5 +3,6 @@ export const assetRoutes = {
     base: 'asset',
     preSignedUploadUrl: 'upload-url',
     uploadComplete: 'upload-complete',
-    assetId: ':assetId'
+    publicUrl: 'public-url/:assetId',
+    assetId: ':assetId',
 }

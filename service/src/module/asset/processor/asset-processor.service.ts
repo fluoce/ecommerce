@@ -1,16 +1,16 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, ServiceUnavailableException } from "@nestjs/common";
 import { AssetCoreService } from "../service/asset-core.service";
-import { STORAGE_TYPES } from "src/infrastructure/storage/storage.constants";
 import type { StorageService } from "src/infrastructure/storage/storage.interface";
 import { funcSharpExtraLarge, funcSharpLarge, funcSharpMedium, funcSharpThumbnail, funcSharpTiny } from "src/module/asset/function/func-sharp";
 import { funcWebpImageObjectKey } from "../function/func-object-key";
 import { AssetType } from "@prisma/client";
+import { currentStorageProvider } from "src/config/storage.config";
 
 @Injectable()
 export class AssetProcessorService {
     constructor(
         private readonly assetCoreService: AssetCoreService,
-        @Inject(STORAGE_TYPES.S3)
+        @Inject(currentStorageProvider)
         private readonly storageService: StorageService
     ) { }
 
