@@ -15,10 +15,17 @@ POST http://localhost:3001/asset/upload-complete
 Content-Type: application/json
 
 {
-    "assetId":"01KTCF0W7TMZXEQWQABR2C34YE"
+    "assetId":"01KTEAHQWZ6J79132ZTRCD7M1Z"
 }
+
+
+### public-url
+GET  http://localhost:3001/asset/public-url/01KTEAHQWZ6J79132ZTRCD7M1Z
+Content-Type: application/json
 
 
 ### delete
 DELETE  http://localhost:3001/asset/01KTCF0W7TMZXEQWQABR2C34YE
 Content-Type: application/json
+
+
