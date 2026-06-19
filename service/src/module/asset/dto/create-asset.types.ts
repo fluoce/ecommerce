@@ -1,4 +1,4 @@
-import { AssetStorageProvider, AssetType, AssetUsage } from "@prisma/client";
+import { AssetStorageProvider, AssetType } from "@prisma/client";
 import { IsEnum, IsInt, IsNotEmpty, IsString, MaxLength } from "class-validator";
 
 export class CreateSignUrlDto {
@@ -15,10 +15,6 @@ export class CreateSignUrlDto {
     @IsInt()
     @IsNotEmpty()
     size: number
-
-    @IsEnum(AssetUsage)
-    @IsNotEmpty()
-    usage: AssetUsage
 }
 
 export class CreateAssetDto {
@@ -28,10 +24,6 @@ export class CreateAssetDto {
 
     @IsEnum(AssetType)
     type: AssetType
-
-    @IsEnum(AssetUsage)
-    @IsNotEmpty()
-    usage: AssetUsage
 
     @IsString()
     @IsNotEmpty()
@@ -47,8 +39,7 @@ export class CreateAssetDto {
     provider: AssetStorageProvider
 }
 
-export class AssetUploadCompleteDto {
-    @IsString()
+export class GetMultipleAssetUrlDto {
     @IsNotEmpty()
-    assetId: string
+    assetIds: string[]
 }

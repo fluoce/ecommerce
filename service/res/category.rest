@@ -1,7 +1,0 @@
-### create category
-POST http://localhost:3001/category
-Content-Type: application/json
-
-{
-    "name":"Electronicsx"
-}

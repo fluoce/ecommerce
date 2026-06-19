@@ -11,10 +11,6 @@ enum AssetType {
     VIDEO
 }
 
-enum AssetUsage {
-    CATEGORY
-}
-
 enum AssetStorageProvider {
     S3
     R2
@@ -23,7 +19,6 @@ enum AssetStorageProvider {
 model Asset {
     id            String               @id
     type          AssetType
-    usage         AssetUsage
     provider      AssetStorageProvider @default(S3)
     originalKey   String
     tinyKey       String?
@@ -36,9 +31,6 @@ model Asset {
     status        AssetStatus          @default(TEMPORARY)
     createdAt     DateTime             @default(now())
     updatedAt     DateTime             @updatedAt
-
-    categoryThumbnails Category[] @relation("CategoryThumbnail")
-    categoryBanners    Category[] @relation("CategoryBanner")
 
     @@index([type])
     @@index([status])

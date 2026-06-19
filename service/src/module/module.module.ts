@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CategoryModule } from './category/category.module';
 import { AssetModule } from './asset/asset.module';
 
 @Module({
-    imports: [AssetModule, CategoryModule,],
+    imports: [AssetModule],
     providers: [],
-    exports: [AssetModule, CategoryModule]
+    exports: [AssetModule]
 })
 export class ModuleModule { }

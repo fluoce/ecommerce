@@ -34,9 +34,9 @@ export const r2StorageConfig = registerAs(
     }),
 );
 
-export const currentStorageProvider = STORAGE_TYPES.S3
-
 export const storageAssetPublicUrls = () => ({
     S3: process.env.S3_URL!,
     R2: process.env.R2_URL!,
 });
+
+export const currentStorageProvider = STORAGE_TYPES.R2

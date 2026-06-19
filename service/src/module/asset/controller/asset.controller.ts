@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { assetRoutes } from '../constant/route';
 import { AssetService } from '../service/asset.service';
-import { AssetUploadCompleteDto, CreateSignUrlDto } from '../types/create-asset.types';
+import { CreateSignUrlDto, GetMultipleAssetUrlDto } from '../dto/create-asset.types';
 
 @Controller(assetRoutes.base)
 export class AssetController {
@@ -17,9 +17,9 @@ export class AssetController {
 
     @Post(assetRoutes.uploadComplete)
     async assetUploadComplete(
-        @Body() data: AssetUploadCompleteDto
+        @Param('assetId') assetId: string
     ) {
-        return await this.assetService.assetUploadComplete({ data })
+        return await this.assetService.assetUploadComplete({ assetId })
     }
 
     @Delete(assetRoutes.assetId)
@@ -30,9 +30,17 @@ export class AssetController {
     }
 
     @Get(assetRoutes.publicUrl)
-    async getPublicUrls(
+    async assetPublicUrls(
         @Param('assetId') assetId: string
     ) {
         return await this.assetService.assetPublicUrls({ assetId });
     }
+
+    @Get(assetRoutes.multipleAssetsPublicUrl)
+    async assetsPublicUrls(
+        @Body() data: GetMultipleAssetUrlDto
+    ) {
+        return await this.assetService.assetsPublicUrls({ assetIds: data.assetIds });
+    }
+
 }

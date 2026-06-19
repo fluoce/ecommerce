@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import type { StorageService } from 'src/infrastructure/storage/storage.interface';
-import { AssetUploadCompleteDto, CreateSignUrlDto } from '../types/create-asset.types';
+import { CreateSignUrlDto } from '../dto/create-asset.types';
 import { IdService } from 'src/lib/id/id.service';
 import { funcAllowSize } from '../function/func-allow-size';
 import { funcObjectKey } from '../function/func-object-key';
@@ -24,7 +24,7 @@ export class AssetService {
         private readonly queueService: QueueService
     ) { }
 
-    async getPreSignedUploadUrl({ data: { fileName, mimeType, size, usage } }: { data: CreateSignUrlDto }): Promise<ResponseDataType> {
+    async getPreSignedUploadUrl({ data: { fileName, mimeType, size } }: { data: CreateSignUrlDto }): Promise<ResponseDataType> {
         const sizeCheck = funcAllowSize({
             mimeType: mimeType,
             size: size
@@ -54,7 +54,6 @@ export class AssetService {
                 mimeType,
                 originalKey,
                 type,
-                usage,
                 provider: this.storageService.provider,
             }
         })
@@ -67,7 +66,7 @@ export class AssetService {
         }
     }
 
-    async assetUploadComplete({ data: { assetId } }: { data: AssetUploadCompleteDto }): Promise<ResponseDataType> {
+    async assetUploadComplete(  { assetId } : { assetId:string }): Promise<ResponseDataType> {
         const asset = await this.assetCoreService.getAssetById({ id: assetId })
         if (!asset) {
             throw new NotFoundException("asset not found")
@@ -148,5 +147,45 @@ export class AssetService {
             largeUrl: finalAsset.largeKey ? `${baseUrl}/${finalAsset.largeKey}` : undefined,
             extraLargeUrl: finalAsset.extraLargeKey ? `${baseUrl}/${finalAsset.extraLargeKey}` : undefined
         };
+    }
+
+    async assetsPublicUrls({ assetIds }: { assetIds?: string[] }): Promise<Record<string, {
+        originalUrl: string;
+        tinyUrl?: string;
+        thumbnailUrl?: string;
+        mediumUrl?: string;
+        largeUrl?: string;
+        extraLargeUrl?: string;
+    }>> {
+        if (!assetIds) {
+            throw new BadRequestException("assetIds are required");
+        }
+        const assets = await this.assetCoreService.getAssetByIds({ ids: assetIds });
+        if (!assets || assets.length === 0) {
+            throw new NotFoundException("No assets found for provided IDs");
+        }
+        const result: Record<string, {
+            originalUrl: string;
+            tinyUrl?: string;
+            thumbnailUrl?: string;
+            mediumUrl?: string;
+            largeUrl?: string;
+            extraLargeUrl?: string;
+        }> = {};
+        for (const asset of assets) {
+            const baseUrl = storageAssetPublicUrls()[asset.provider];
+            if (!baseUrl) {
+                continue;
+            }
+            result[asset.id] = {
+                originalUrl: `${baseUrl}/${asset.originalKey}`,
+                tinyUrl: asset.tinyKey ? `${baseUrl}/${asset.tinyKey}` : undefined,
+                thumbnailUrl: asset.thumbnailKey ? `${baseUrl}/${asset.thumbnailKey}` : undefined,
+                mediumUrl: asset.mediumKey ? `${baseUrl}/${asset.mediumKey}` : undefined,
+                largeUrl: asset.largeKey ? `${baseUrl}/${asset.largeKey}` : undefined,
+                extraLargeUrl: asset.extraLargeKey ? `${baseUrl}/${asset.extraLargeKey}` : undefined
+            };
+        }
+        return result;
     }
 }

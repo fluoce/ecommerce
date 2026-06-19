@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "src/infrastructure/database/postgresql/prisma.service";
-import { CreateAssetDto } from "../types/create-asset.types";
+import { CreateAssetDto } from "../dto/create-asset.types";
 import { Asset, AssetStatus } from "@prisma/client";
 import { funcTryCatch } from "src/function/func-try-catch";
 
@@ -26,7 +26,24 @@ export class AssetCoreService {
         return await funcTryCatch<Asset | null, null>({
             func: () => this.prisma.asset.findUnique({
                 where: {
-                    id
+                    id,
+                }
+            }),
+            action: "get_asset_byId",
+            logger: this.logger
+        })
+    }
+
+    async getAssetByIds({ ids }: { ids: string[] }): Promise<Asset[] | null> {
+        return await funcTryCatch<Asset[] | null, null>({
+            func: () => this.prisma.asset.findMany({
+                where: {
+                    id: {
+                        in: ids
+                    },
+                    status: {
+                        notIn: ['DELETED', 'TEMPORARY']
+                    }
                 }
             }),
             action: "get_asset_byId",
